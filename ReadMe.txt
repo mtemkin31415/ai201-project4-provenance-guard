@@ -113,3 +113,6 @@ This system is not very good at shorter version of text. For example, comments o
 
 Spec Reflection:
 The spec helped me by getting to identify my endpoints and how they work with each other before I created them. This gave me a really good view of the scope of the project. One way my implementation diverged from my spec was that i didn't need a frontend GUI to impolement this whole system. It may be easier in the future to test this system if i include one, but it would take a lot of time to implement
+
+
+Loom Video Link:https://www.loom.com/share/3653987cd88d4508b2eec73f7c4a4525
