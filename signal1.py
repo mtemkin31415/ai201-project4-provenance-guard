@@ -27,20 +27,28 @@ import textstat
 # looks AI" for a feature.  These are first-guess values — tune them against
 # real sample texts.  squash() maps a raw measurement onto 0..1 between them.
 # ---------------------------------------------------------------------------
-VARIANCE_HUMAN = 40.0   # high sentence-length variance => human
-VARIANCE_AI    = 5.0    # low variance => AI (uniform)
+VARIANCE_HUMAN = 48.0   # high sentence-length variance => human
+VARIANCE_AI    = 15.0   # low variance => AI (uniform)
 
 TTR_HUMAN = 0.75        # high type-token ratio (diverse vocab) => human
 TTR_AI    = 0.45        # lower diversity => AI
 
-EASE_HUMAN = 85.0       # flesch_reading_ease: scattered/high => human-ish
-EASE_AI    = 50.0       # mid "polished" band => AI-ish
+EASE_HUMAN = 75.0       # flesch_reading_ease: easy/high => human
+EASE_AI    = 10.0       # dense, low-readability => AI (tightened)
 
 PUNCT_HUMAN = 0.12      # richer/irregular punctuation => human
 PUNCT_AI    = 0.04      # sparse, regular punctuation => AI
 
+# Per-feature weights (sum to 1.0). Calibrated on real samples: readability is
+# the reliable discriminator, variance helps some, while TTR and punctuation are
+# near-noise at short text lengths so they carry only token weight.
+WEIGHT_EASE     = 0.60
+WEIGHT_VARIANCE = 0.30
+WEIGHT_TTR      = 0.05
+WEIGHT_PUNCT    = 0.05
+
 # Below this many words the features are too noisy to trust; return neutral.
-MIN_WORDS_FOR_CONFIDENCE = 75
+MIN_WORDS_FOR_CONFIDENCE = 35
 NEUTRAL_SCORE = 0.5
 
 
@@ -105,8 +113,13 @@ def run_signal_1(text):
     punct_density = len(punct_tokens) / len(tokens) if tokens else 0.0
     punct_score = squash(punct_density, PUNCT_HUMAN, PUNCT_AI)
 
-    # --- Combine: simple average of the four contributions ------------------
-    return statistics.mean([variance_score, ttr_score, ease_score, punct_score])
+    # --- Combine: weighted sum (readability-dominant) -----------------------
+    return (
+        WEIGHT_EASE * ease_score
+        + WEIGHT_VARIANCE * variance_score
+        + WEIGHT_TTR * ttr_score
+        + WEIGHT_PUNCT * punct_score
+    )
 
 
 if __name__ == "__main__":
