@@ -113,6 +113,12 @@ Appeals flow: Frontend GUI sends to rate limited, if api call isn't limited, the
 ##AI Tool Plan
 Standard AI stuff
 
+M3 (submission endpoint + first signal): I will use Claude to help me build the first heuristics signal. I will ask it to build it according to the specs I am creating now. i will then verify it works with several examples and fine tune the model so it is more accurate.
+
+M4 (second signal + confidence scoring): I will use Claude to help me create an interface to interact with the GROQ LLm using my API key. I will review the code and the prompt it sends to groq
+
+M5 (Production Layer): I will use Calude to help assist me with creating the Production layer including the Rate Limiter and appeals endpoint. I will then verify the code according to the specs in my planning.md
+
 
 
 
